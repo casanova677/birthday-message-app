@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Happy Birthday 🎉</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Socket.io -->
+  <script src="/socket.io/socket.io.js"></script>
+
+   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+       /* Background container */
+    .bg-slideshow {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+    }
+
+    .bg-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center 30%;
+      opacity: 0;
+      animation: fadeBg 16s infinite;
+    }
+
+    .bg-slide:nth-child(1) {
+      background-image: url('/images/bg1.png') ;
+      background-size: cover;
+      min-height: 100vh; /* change */
+      animation-delay: 0s;
+    }
+
+    .bg-slide:nth-child(2) {
+      background-image: url('/images/bg2.jpg')  ;
+      background-size: cover;
+      min-height: 100vh;
+      animation-delay: 8s;
+    }
+
+    @keyframes fadeBg {
+      0% { opacity: 0; }
+      15% { opacity: 1; }
+      50% { opacity: 1; }
+      65% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    /* Optional soft overlay */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        rgba(0,0,0,0.25),
+        rgba(0,0,0,0.25)
+      );
+      z-index: -5;
+    }
+    .message-card {
+    animation: floatIn 0.8s ease forwards;
+  }
+
+  @keyframes floatIn {
+    from {
+      transform: translateY(20px) scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+
+    /* Extra mobile safety */
+    @media (max-width: 640px) {
+      .bg-img {
+        opacity: 0.18;
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center px-2 py-2 text-white overflow-x-hidden" >
+  <!-- 🌈 Animated Background Images -->
+  <div class="bg-slideshow">
+    <div class="bg-slide"></div>
+    <div class="bg-slide"></div>
+  </div>
+  <div class="bg-overlay"></div>
+
+  <!-- 🎉 HERO -->
+  <div class="flex flex-col items-center text-center mb-4">
+
+    <!-- Celebrant Photos -->
+    <div class="flex justify-center gap-4 sm:gap-6 mb-6 flex-wrap">
+      <img src="/images/francis1.jpg"
+          class="w-28 h-32 sm:w-32 sm:h-36 object-contain rounded-2xl bg-white/30 p-1 shadow-lg float-slow" />
+
+      <img src="/images/francis2.jpg"
+          class="w-36 h-40 sm:w-40 sm:h-44 object-contain rounded-2xl bg-white/30 p-1 shadow-xl float-mid birthday-glow" />
+
+      <img src="/images/francis3.jpg"
+          class="w-28 h-32 sm:w-32 sm:h-36 object-contain rounded-2xl bg-white/30 p-1 shadow-lg float-fast" />
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-4xl md:text-6xl text-pink-600 font-extrabold drop-shadow-lg" style="font-family: 'Great Vibes', cursive;">
+      🎂 Happy 70th Birthday!
+
+    </h1>
+    <p class="mt-2 text-2xl md:text-4xl font-extrabold text-lg text-pink-600 max-w-xl" style="font-family: 'Great Vibes', cursive;">
+       Mrs Chinweokwu Blessing 💖
+    </p>
+    <p class="mt-2 text-lg text-white-800 max-w-xl opacity-90">
+      BLESSED BY GRACE THROUGH EVERY SEASON 💖
+    </p>
+
+  </div>
+
+<!-- 💌 MESSAGES -->
+  <div id="messages" class="relative w-full max-w-4xl mx-auto h-[280px] flex items-center justify-center mt-3">
+
+    <% messages.forEach(msg => { %>
+      <div class="message-card inset-0 opacity-0 scale-95 transition-all duration-700flex items-center gap-6 bg-white/25 backdrop-blur-xl fade-up backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30">
+
+        <!-- Message Row -->
+        <div class="grid grid-cols-[1fr_auto] gap-6 items-start" style="font-family: 'Great Vibes', cursive;">
+
+          <!-- Message Text -->
+          <p class="text-lg text-2xl md:text-4xl font-bolder text-black-900 leading-relaxed break-words whitespace-pre-wrap">
+            <%= msg.message %>
+          </p>
+
+          <!-- Image fixed right -->
+          <% if (msg.picture) { %>
+            <img
+              src="<%= msg.picture %>"
+              data-enlarge
+              alt="Birthday Memory"
+            class="w-32 h-32 rounded-2xl object-cover shadow-lg sm:w-28 sm:h-28 object-cover rounded-xl shadow-md cursor-pointer hover:scale-105 transition"
+            />
+          <% } %>
+
+        </div>
+        <div class="mt-4 border-t border-white/30"></div>
+        <!-- Timestamp -->
+        <div class="mt-4 text-sm text-black-700 opacity-80 flex justify-between">
+           <span class="text-xl font-bold"><%= msg.sender_name %></span>
+          <%= new Date(msg.createdAt).toLocaleString() %>
+        </div>
+
+      </div>
+    <% }) %>
+
+  </div>
+
+  <!-- 🖼️ IMAGE MODAL -->
+  <div id="imgModal"
+      class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+    <img id="modalImg"
+        class="max-w-[90%] max-h-[90%] rounded-2xl shadow-2xl">
+  </div>
+
+<a href="/submit"
+       class="inline-block mt-6 px-8 py-3 bg-white text-pink-600 font-semibold rounded-full shadow-lg hover:scale-105 transition">
+      ➕ Add Your Message
+    </a>
+
+<!-- 📱 QR Code: Submit Message -->
+<div
+  class="fixed bottom-4 right-4 z-40 hidden sm:flex flex-col items-center gap-2
+         bg-white/30 backdrop-blur-lg rounded-xl p-3 shadow-xl border border-white/40">
+
+  <div id="qrCode"></div>
+
+  <p class="text-xs text-gray-700 text-center leading-tight">
+    Scan to send<br>
+    your birthday wishes 🎉
+  </p>
+</div>
+<!-- ⚡ SCRIPTS -->
+<script>
+  const socket = io();
+  const messagesDiv = document.getElementById('messages');
+  let allMessages = Array.from(messagesDiv.children);
+
+  const BATCH_SIZE = 1;
+  const INTERVAL = 10000;
+  let index = 0;
+
+  function showBatch() {
+    messagesDiv.innerHTML = '';
+    const batch = allMessages.slice(index, index + BATCH_SIZE);
+    batch.forEach(el => messagesDiv.appendChild(el));
+    index += BATCH_SIZE;
+    if (index >= allMessages.length) index = 0;
+  }
+
+  showBatch();
+  setInterval(showBatch, INTERVAL);
+
+  socket.on('newMessage', msg => {
+    const card = document.createElement('div');
+    card.className =
+      "fade-up bg-white/20 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30";
+
+    card.innerHTML = `
+      <div class="grid grid-cols-[1fr_auto] gap-6 items-start">
+        <p class="text-lg font-medium text-gray-800">${msg.message}</p>
+        ${msg.picture ? `<img src="${msg.picture}" data-enlarge class="w-28 h-28 object-cover rounded-xl shadow-md cursor-pointer" />` : ``}
+      </div>
+      <div class="mt-4 text-sm text-gray-600 opacity-80 text-right">
+        ${new Date(msg.createdAt).toLocaleString()}
+      </div>
+    `;
+
+    
+
+    async function refreshMessages() {
+        const res = await fetch('/messages/latest');
+        const data = await res.json();
+
+        allMessages = data.map(msg => {
+          const card = document.createElement('div');
+          card.className =
+            "fade-up bg-white/20 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30";
+
+          card.innerHTML = `
+            <div class="grid grid-cols-[1fr_auto] gap-6 items-start">
+              <p class="text-lg font-medium text-gray-800">${msg.message}</p>
+              ${msg.picture ? `<img src="${msg.picture}" data-enlarge class="w-28 h-28 object-cover rounded-xl shadow-md cursor-pointer" />` : ``}
+            </div>
+            <div class="mt-4 text-sm text-gray-600 opacity-80 text-right">
+              ${new Date(msg.createdAt).toLocaleString()}
+            </div>
+          `;
+          return card;
+        });
+        showBatch();
+      }
+
+      setInterval(refreshMessages, 15000);
+
+      /* Image modal */
+      card.querySelectorAll('img[data-enlarge]').forEach(img => {
+        img.addEventListener('click', () => {
+          document.getElementById('modalImg').src = img.src;
+          document.getElementById('imgModal').classList.remove('hidden');
+          document.getElementById('imgModal').classList.add('flex');
+        });
+      });
+  });
+
+    
+
+  /* Image modal */
+  document.addEventListener('click', e => {
+    if (e.target.dataset.enlarge) {
+      modalImg.src = e.target.src;
+      imgModal.classList.remove('hidden');
+      imgModal.classList.add('flex');
+    }
+  });
+  imgModal.addEventListener('click', () => {
+    imgModal.classList.add('hidden');
+  });
+
+  /* Confetti */
+  setTimeout(() => {
+    for (let i = 0; i < 80; i++) {
+      const c = document.createElement('div');
+      c.style.position = 'fixed';
+      c.style.top = '-10px';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.width = '8px';
+      c.style.height = '8px';
+      c.style.background = `hsl(${Math.random()*360},100%,70%)`;
+      c.style.borderRadius = '50%';
+      c.style.animation = `fall ${3 + Math.random()*2}s linear`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 5000);
+    }
+  }, 800);
+</script>
+
+<script>
+  const submitUrl = `${window.location.origin}/submit`;
+
+  QRCode.toCanvas(
+    document.createElement('canvas'),
+    submitUrl,
+    { width: 120, margin: 1 },
+    function (err, canvas) {
+      if (err) console.error(err);
+      document.getElementById('qrCode').appendChild(canvas);
+    }
+  );
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Birthday Messages</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Dancing Script', cursive;
+      background: url('/images/bg1.png')center 40% no-repeat fixed;
+      background-size: cover;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+  </style>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Great+Vibes&display=swap" rel="stylesheet">
+</head>
+<body class="text-white">
+
+  <h1 class="text-4xl md:text-5xl font-bold text-center mb-8">🎂 Admin Dashboard</h1>
+
+  <div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- Delete All Button -->
+    <form action="/admin/delete-all" method="POST" onsubmit="return confirm('Are you sure you want to delete all messages?');">
+      <button class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full font-semibold shadow-lg">
+        Delete All Messages
+      </button>
+    </form>
+
+    <!-- Messages -->
+    <% messages.forEach(msg => { %>
+      <div class="bg-white/20 backdrop-blur-xl rounded-3xl p-6 shadow-xl flex justify-between items-center">
+        <div>
+          <p class="text-xl text-gray-900 font-bold mb-2"><%= msg.sender_name %></p>
+          <p class="text-lg text-gray-800"><%= msg.message %></p>
+          <p class="text-sm text-gray-700 opacity-80 mt-1"><%= new Date(msg.createdAt).toLocaleString() %></p>
+        </div>
+
+        <% if (msg.picture) { %>
+          <img src="<%= msg.picture %>" class="w-24 h-24 rounded-xl object-cover shadow-lg" />
+        <% } %>
+
+        <form action="/admin/delete/<%= msg._id %>" method="POST" onsubmit="return confirm('Delete this message?');">
+          <button class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full font-semibold shadow">
+            Delete
+          </button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+
+</body>
+</html>

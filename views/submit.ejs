@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Leave a Birthday Message 🎉</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <!-- 🔁 Background fade animation -->
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    /* Background container */
+    .bg-slideshow {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+    }
+
+    .bg-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center 40%;
+      opacity: 0;
+      animation: fadeBg 16s infinite;
+    }
+
+    .bg-slide:nth-child(1) {
+      background-image: url('/images/bg1.png')  ;
+      background-size: cover;
+      min-height: 100vh; /* change */
+      animation-delay: 0s;
+    }
+
+    .bg-slide:nth-child(2) {
+      background-image: url('/images/bg2.jpg') ;
+      background-size: cover;
+      min-height: 100vh;
+      animation-delay: 8s;
+    }
+
+    @keyframes fadeBg {
+      0% { opacity: 0; }
+      15% { opacity: 1; }
+      50% { opacity: 1; }
+      65% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    /* Optional soft overlay */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        rgba(0,0,0,0.25),
+        rgba(0,0,0,0.25)
+      );
+      z-index: -5;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center px-4 text-white">
+
+  <!-- 🌄 Background -->
+  <div class="bg-slideshow">
+    <div class="bg-slide"></div>
+    <div class="bg-slide"></div>
+  </div>
+  <div class="bg-overlay"></div>
+
+  <!-- 💌 Form Card -->
+  <div
+    class="relative z-10 w-full max-w-lg
+           bg-white/25 backdrop-blur-xl
+           rounded-2xl p-8 shadow-2xl
+           border border-white/30">
+
+    <h1 class="text-3xl font-extrabold text-pink-600 text-center mb-2">
+      🎈 Leave a Birthday Message
+    </h1>
+
+    <p class="text-center text-2xl text-white-800 opacity-90 mb-6" style="font-family: 'Great Vibes', cursive;">
+      Make their day brighter with your wishes 💖
+    </p>
+
+    <form  enctype="multipart/form-data" class="space-y-5">
+
+      <!-- Sender Name -->
+      <div>
+        <label class="block text-sm mb-1 text-black-800">
+          Your Name
+        </label>
+        <input
+          type="text"
+          name="sender_name"
+          required
+          maxlength="40"
+          placeholder="e.g. Sarah 🎂"
+          class="w-full rounded-xl p-3 text-gray-800
+                 focus:outline-none focus:ring-2 focus:ring-pink-400"
+        />
+      </div>
+
+      <!-- Message -->
+      <div>
+        <label class="block text-sm mb-1 text-black-800">
+          Your Message
+        </label>
+        <textarea
+          name="message"
+          rows="4"
+          required
+          placeholder="Write something beautiful... 142 / 300 characters"
+          class="w-full rounded-xl p-3 text-gray-800
+                 focus:outline-none focus:ring-2 focus:ring-pink-400"
+        ></textarea>
+      </div>
+
+      <!-- Image Upload -->
+      <div>
+        <label class="block text-sm mb-1 text-black-800">
+          Add a Photo (optional)
+        </label>
+
+        <input
+          type="file"
+          name="picture"
+          accept="image/*"
+          class="block w-full text-sm text-white
+                 file:mr-4 file:py-2 file:px-4
+                 file:rounded-full file:border-0
+                 file:text-sm file:font-semibold
+                 file:bg-white file:text-black-600
+                 hover:file:bg-black-100 cursor-pointer"
+        />
+      </div>
+
+      <!-- Preview -->
+      <div id="preview" class="hidden">
+        <p class="text-sm text-pink-800 mb-1">Preview:</p>
+        <img
+          id="previewImg"
+          class="rounded-xl max-h-60 mx-auto shadow-lg"
+        />
+      </div>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="w-full py-3 bg-white text-pink-600
+               font-bold rounded-full shadow-lg
+               hover:scale-105 transition"
+      >
+        🎉 Submit Message
+      </button>
+
+    </form>
+
+    <!-- Back -->
+    <div class="text-center mt-6">
+      <a href="/" class="text-sm text-black-800 underline opacity-90 hover:opacity-100">
+        ← Back to Home Page
+      </a>
+    </div>
+
+  </div>
+  <script>
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      const res = await fetch('/submit', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (res.ok) {
+        confetti({
+          particleCount: 180,
+          spread: 90,
+          origin: { y: 0.6 }
+        });
+
+        form.innerHTML = `
+          <div class="text-center">
+            <h2 class="text-3xl font-bold text-pink-600">🎉 Message Sent!</h2>
+            <p class="mt-3 text-pink-800">
+              Thank you for making Francis smile 💖
+            </p>
+            <a href="/" class="inline-block mt-6 underline text-blue-800">
+              Back to Birthday Page
+            </a>
+          </div>
+        `;
+      }
+    });
+  </script>
+
+
+  <!-- 📷 Image preview logic -->
+  <script>
+    const fileInput = document.querySelector('input[name="picture"]');
+    const preview = document.getElementById('preview');
+    const previewImg = document.getElementById('previewImg');
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image must be under 5MB');
+        fileInput.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewImg.src = e.target.result;
+        preview.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+
+</body>
+</html>
