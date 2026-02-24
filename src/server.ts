@@ -16,7 +16,7 @@ import { Message } from './models/Message.js';
 import streamifier from 'streamifier';
 import cloudinary from './cloudinary.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 
 /* ---------------- ENV LOAD (ONCE, SAFE) ---------------- */
 const envPath = path.join(__dirname, '../.env');
