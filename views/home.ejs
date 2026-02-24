@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Socket.io -->
   <script src="/socket.io/socket.io.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
 
    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Great+Vibes&display=swap" rel="stylesheet">
 
@@ -16,8 +17,20 @@
     .bg-slideshow {
       position: fixed;
       inset: 0;
-      z-index: -10;
+      z-index: -15;
     }
+
+      .fade-bottom {
+        max-height: 100%;
+        mask-image: linear-gradient(to bottom, black 85%, transparent);
+        -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent);
+      }
+
+      .auto-text {
+        font-size: clamp(1.1rem, 2.2vw, 2.6rem);
+        line-height: 1.4;
+        word-break: break-word;
+      }
 
     .bg-slide {
       position: absolute;
@@ -64,16 +77,16 @@
     animation: floatIn 0.8s ease forwards;
   }
 
-  @keyframes floatIn {
-    from {
-      transform: translateY(20px) scale(0.95);
-      opacity: 0;
+    @keyframes floatIn {
+      from {
+        transform: translateY(30px) scale(0.96);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
     }
-    to {
-      transform: translateY(0) scale(1);
-      opacity: 1;
-    }
-  }
     @media (max-width: 640px) {
       .bg-slide {
         background-position: center 45%;
@@ -88,7 +101,7 @@
   </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center px-2 py-2 text-white overflow-x-hidden" >
+<body class="h-screen flex flex-col items-center px-2 py-2 text-white overflow-hidden">
   <!-- 🌈 Animated Background Images -->
   <div class="bg-slideshow">
     <div class="bg-slide"></div>
@@ -97,87 +110,50 @@
   <div class="bg-overlay"></div>
 
   <!-- 🎉 HERO -->
-<div class="flex flex-col items-center text-center mb-6 px-2">
+<div class="relative z-20 flex-shrink-0">
+    <div class="flex flex-col items-center text-center px-2 flex-shrink-0 mb-6">
 
-  <!-- Celebrant Photos -->
-  <div class="flex justify-center gap-3 sm:gap-6 mb-6 flex-wrap">
-    <img src="/images/francis1.jpg"
-      class="w-32 h-36 sm:w-32 sm:h-36 md:w-36 md:h-40
-             object-contain rounded-2xl bg-white/30 p-1 shadow-lg float-slow" />
+      <h1
+        class="text-5xl sm:text-5xl md:text-6xl
+              text-pink-600 font-extrabold drop-shadow-lg"
+        style="font-family: 'Great Vibes', cursive;"
+      >
+        Happy 70th Birthday!
+      </h1>
 
-    <img src="/images/francis2.jpg"
-      class="w-40 h-44 sm:w-40 sm:h-44 md:w-48 md:h-52
-             object-contain rounded-2xl bg-white/30 p-1 shadow-xl float-mid birthday-glow" />
+      <p
+        class="mt-2 text-3xl sm:text-3xl md:text-4xl
+              font-extrabold text-pink-600 mb-3"
+        style="font-family:'Playfair Display SC', serif;"
+      >
+        Mrs Chinweokwu Blessing Ngozi💖
+      </p>
 
-    <img src="/images/francis3.jpg"
-      class="w-32 h-36 sm:w-32 sm:h-36 md:w-36 md:h-40
-             object-contain rounded-2xl bg-white/30 p-1 shadow-lg float-fast" />
+      <p class="mt-2 text-lg sm:text-lg md:text-xl opacity-90 max-w-md mb-3">
+        BLESSED BY GRACE THROUGH EVERY SEASON 💖
+      </p>
+    </div>
+  </div>
+<!-- 💌 MESSAGES -->
+  <div id="messages" class="relative w-full max-w-[95vw] mx-auto flex items-start justify-center gap-4 px-2">
+
+     <% messages.forEach(msg => { %>
+      <div class="bg-white/20 backdrop-blur-xl rounded-3xl p-6 shadow-xl flex flex-row items-start gap-4">
+  <!-- Text column -->
+  <div class="flex-1">
+    <p class="text-xl text-white-900 font-bold mb-2"><%= msg.sender_name %></p>
+    <p class="text-xl text-white-900 font-bold" style="font-family: 'Cormorant Garamond', serif;"><%= msg.message %></p>
+    <p class="text-sm text-white-700 opacity-80 mt-1"><%= new Date(msg.createdAt).toLocaleString() %></p>
   </div>
 
-  <!-- Title -->
-  <h1
-    class="text-5xl sm:text-5xl md:text-6xl
-           text-pink-600 font-extrabold drop-shadow-lg"
-    style="font-family: 'Great Vibes', cursive;"
-  >
-    🎂 Happy 70th Birthday!
-  </h1>
-
-  <p
-    class="mt-2 text-3xl sm:text-3xl md:text-4xl
-           font-extrabold text-pink-600"
-    style="font-family: 'Great Vibes', cursive;"
-  >
-    Mrs Chinweokwu Blessing 💖
-  </p>
-
-  <p class="mt-2 text-lg sm:text-lg md:text-xl opacity-90 max-w-md">
-    BLESSED BY GRACE THROUGH EVERY SEASON 💖
-  </p>
+  <% if (msg.picture) { %>
+    <img src="<%= msg.picture %>" 
+      alt="Birthday Memory"
+      class="w-36 h-36 sm:w-28 sm:h-28 rounded-2xl object-cover shadow-lg cursor-pointer hover:scale-105 transition flex-shrink-0"
+    />
+  <% } %>
 </div>
-
-<!-- 💌 MESSAGES -->
-  <div id="messages" class="relative w-full max-w-4xl mx-auto h-[360px] sm:h-[280px] flex items-center justify-center mt-4 px-2">
-
-    <% messages.forEach(msg => { %>
-      <div class="message-card
-         w-full max-w-[95%] sm:max-w-3xl
-         bg-white/30 backdrop-blur-xl
-         rounded-3xl p-6 sm:p-6
-         shadow-2xl border border-white/40
-         text-center">
-
-        <!-- Message Row -->
-        <div class="grid grid-cols-[1fr_auto] gap-6 items-start" style="font-family: 'Great Vibes', cursive;">
-
-          <!-- Message Text -->
-          <p class="text-2xl sm:text-2xl md:text-4xl font-semibold text-black leading-relaxed whitespace-pre-wrap">
-            <%= msg.message %>
-          </p>
-
-          <!-- Image fixed right -->
-          <% if (msg.picture) { %>
-            <img
-              src="<%= msg.picture %>"
-              data-enlarge
-              alt="Birthday Memory"
-            class="w-36 h-36 sm:w-28 sm:h-28 rounded-2xl object-cover shadow-lg cursor-pointer hover:scale-105 transition"
-            />
-          <% } %>
-
-        </div>
-        <div class="mt-4 border-t border-white/30"></div>
-        <!-- Timestamp -->
-       <div class="mt-4 text-lg sm:text-sm text-black/80 flex justify-between">
-          <span class="font-bold text-xl sm:text-lg">
-            <%= msg.sender_name %>
-          </span>
-          <span class="text-sm sm:text-xs">
-            <%= new Date(msg.createdAt).toLocaleString() %>
-          </span>
-        </div>
-
-      </div>
+      
     <% }) %>
 
   </div>
@@ -201,7 +177,7 @@
 
   <div id="qrCode"></div>
 
-  <p class="text-xs text-gray-700 text-center leading-tight">
+  <p class="text-xs text-white-700 text-center leading-tight">
     Scan to send<br>
     your birthday wishes 🎉
   </p>
@@ -213,7 +189,7 @@
   let allMessages = Array.from(messagesDiv.children);
 
   const BATCH_SIZE = 1;
-  const INTERVAL = 10000;
+  const INTERVAL = 15000;
   let index = 0;
 
   function showBatch() {
@@ -310,7 +286,16 @@
     }
   }, 800);
 </script>
-
+<script>
+  document.querySelectorAll('.auto-text').forEach(p => {
+    if (p.scrollHeight > p.clientHeight + 20) {
+      p.insertAdjacentHTML(
+        'afterend',
+        `<div class="text-sm text-black/70 mt-2 italic">— Message continues —</div>`
+      );
+    }
+  });
+</script>
 <script>
   const submitUrl = `${window.location.origin}/submit`;
 

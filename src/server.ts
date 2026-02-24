@@ -107,11 +107,13 @@ app.post('/admin/delete-all', async (req, res) => {
 
 app.post('/submit', submitLimiter, upload.single('picture'), async (req, res) => {
   
-  console.log('BODY:', req.body);
-  console.log('FILE:', req.file); // 🔥 THIS LINE
   const { message } = req.body;
   const{ sender_name } = req.body;
  let pictureUrl: string | null = null;
+
+  if (!message || message.length > 300) {
+    return res.status(400).send('Message too long or empty.');
+  }
 
 if (req.file) {
   try {

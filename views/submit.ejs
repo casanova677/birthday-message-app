@@ -126,17 +126,12 @@
         </label>
         <textarea
           name="message"
-          rows="6"
-          required
-          placeholder="Write something beautiful..."
-          class="w-full rounded-2xl
-                p-4 sm:p-3
-                text-lg sm:text-base
-                text-gray-800
-                min-h-[180px] sm:min-h-[120px]
-                focus:outline-none
-                focus:ring-2 focus:ring-pink-400"
+          rows="4"
+          maxlength="300"
+          placeholder="Write something beautiful... (max 300 chars)"
+          class="w-full rounded-xl p-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-400"
         ></textarea>
+        <p id="charCount" class="text-sm text-gray-700 mt-1">0 / 300</p>
       </div>
 
       <!-- Image Upload -->
@@ -255,6 +250,14 @@
       };
       reader.readAsDataURL(file);
     });
+  </script>
+  <script>
+  const messageInput = document.querySelector('textarea[name="message"]');
+  const charCount = document.getElementById('charCount');
+
+  messageInput.addEventListener('input', () => {
+    charCount.textContent = `${messageInput.value.length} / 300`;
+  });
   </script>
 
 </body>

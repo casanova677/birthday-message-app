@@ -1,0 +1,110 @@
+      /* Background container */
+    .bg-slideshow {
+      position: fixed;
+      inset: 0;
+      z-index: -15;
+    }
+
+      .fade-bottom {
+        max-height: 100%;
+        mask-image: linear-gradient(to bottom, black 85%, transparent);
+        -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent);
+      }
+
+      .auto-text {
+        font-size: clamp(1.1rem, 2.2vw, 2.6rem);
+        line-height: 1.4;
+        word-break: break-word;
+      }
+
+    .bg-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center 30%;
+      opacity: 0;
+      animation: fadeBg 16s infinite;
+    }
+
+    .bg-slide:nth-child(1) {
+      background-image: url('/images/bg1.png') ;
+      background-size: cover;
+      min-height: 100vh; /* change */
+      animation-delay: 0s;
+    }
+
+    .bg-slide:nth-child(2) {
+      background-image: url('/images/bg2.jpg')  ;
+      background-size: cover;
+      min-height: 100vh;
+      animation-delay: 8s;
+    }
+
+    @keyframes fadeBg {
+      0% { opacity: 0; }
+      15% { opacity: 1; }
+      50% { opacity: 1; }
+      65% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    /* Optional soft overlay */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        rgba(0,0,0,0.25),
+        rgba(0,0,0,0.25)
+      );
+      z-index: -5;
+    }
+    .message-card {
+    animation: floatIn 0.8s ease forwards;
+  }
+
+    @keyframes floatIn {
+      from {
+        transform: translateY(30px) scale(0.96);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+    @media (max-width: 640px) {
+      .bg-slide {
+        background-position: center 45%;
+      }
+    }
+    /* Extra mobile safety */
+    @media (max-width: 640px) {
+      .bg-img {
+        opacity: 0.18;
+      }
+    }
+
+
+     body {
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    /* Background container */
+    .bg-slideshow {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+    }
+
+        .fade-bottom {
+            max-height: 100%;
+            mask-image: linear-gradient(to bottom, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent);
+        }
+    
+        .auto-text {
+            font-size: clamp(1.1rem, 2.2vw, 2.6rem);
+            line-height: 1.4;
+            word-break: break-word;
+        }
