@@ -7,7 +7,7 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "target": "ES2022",
+    "target": "ES2020",
     "verbatimModuleSyntax": true,     // keep it
     "module": "ESNext",             // or "ESNext"
     "moduleResolution": "node",   // or "Bundler" if using Vite/esbuild              // or newer
